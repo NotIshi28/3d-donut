@@ -1,97 +1,101 @@
 <html>
   <head>
-<title>Cursor Interactive ASCII 3D Donut</title>
-<style>
-  body {
-    background-color: #000;
-    color: #16e;
-    font-family: monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
-    cursor: none;
-  }
-  #donut {
-    font-size: 10px;
-    line-height: 10px;
-    letter-spacing: 0px;
-    white-space: pre;
-  }
-  #cursor {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    background-color: #16e;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-  }
-</style>
-</head>
-<body>
-<div id="cursor"></div>
-<pre id="donut"></pre>
-
-<script>
-const donut = document.getElementById('donut');
-const cursor = document.getElementById('cursor');
-
-let A = 1, B = 1;
-let mouseX = 0, mouseY = 0;
-
-function renderFrame() {
-  const b = [];
-  const z = [];
-  const width = 160, height = 44;
-
-  // Update rotation based on mouse position
-  A = (mouseY / window.innerHeight) * Math.PI * 2;
-  B = (mouseX / window.innerWidth) * Math.PI * 2;
-
-  const cA = Math.cos(A), sA = Math.sin(A);
-  const cB = Math.cos(B), sB = Math.sin(B);
-
-  for (let k = 0; k < width * height; k++) {
-    b[k] = k % width === width - 1 ? '\n' : ' ';
-    z[k] = 0;
-  }
-
-  for (let j = 0; j < 14.28; j += 0.02) {
-    const ct = Math.cos(j), st = Math.sin(j);
-    for (let i = 0; i < 6.28; i += 0.02) {
-      const sp = Math.sin(i), cp = Math.cos(i);
-      const h = ct + 2;
-      const o = x + width * y;
-      const N = Math.floor(8 * (o-h*sp));
-      if (y < height && y >= 0 && x >= 0 && x < width - 1 && D > z[o]) {
-        z[o] = D;
-        b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0];
+  <title>Cursor Interactive ASCII 3D Donut</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      cursor: none;
+    }
+    #donut {
+      font-size: 10px;
+      line-height: 10px;
+      letter-spacing: 0px;
+      white-space: pre;
+    }
+    #cursor {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: #0f0;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+  </head>
+  <body>
+  <div id="cursor"></div>
+  <pre id="donut"></pre>
+  
+  <script>
+  const donut = document.getElementById('donut');
+  const cursor = document.getElementById('cursor');
+  
+  let A = 1, B = 1;
+  let mouseX = 0, mouseY = 0;
+  
+  function renderFrame() {
+    const b = [];
+    const z = [];
+    const width = 160, height = 44;
+  
+    // Update rotation based on mouse position
+    A = (mouseY / window.innerHeight) * Math.PI * 2;
+    B = (mouseX / window.innerWidth) * Math.PI * 2;
+  
+    const cA = Math.cos(A), sA = Math.sin(A);
+    const cB = Math.cos(B), sB = Math.sin(B);
+  
+    for (let k = 0; k < width * height; k++) {
+      b[k] = k % width === width - 1 ? '\n' : ' ';
+      z[k] = 0;
+    }
+  
+    for (let j = 0; j < 6.28; j += 0.07) {
+      const ct = Math.cos(j), st = Math.sin(j);
+      for (let i = 0; i < 6.28; i += 0.02) {
+        const sp = Math.sin(i), cp = Math.cos(i);
+        const h = ct + 2;
+        const D = 1 / (sp * h * sA + st * cA + 5);
+        const t = sp * h * cA - st * sA;
+        const x = Math.floor(width / 2 + (width / 4) * D * (cp * h * cB - t * sB));
+        const y = Math.floor(height / 2 + (height / 4) * D * (cp * h * sB + t * cB));
+        const o = x + width * y;
+        const N = Math.floor(8 * ((st * sA - sp * ct * cA) * cB - sp * ct * sA - st * cA - cp * ct * sB));
+        if (y < height && y >= 0 && x >= 0 && x < width - 1 && D > z[o]) {
+          z[o] = D;
+          b[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0];
+        }
       }
     }
+  
+    donut.innerHTML = b.join('');
+    requestAnimationFrame(renderFrame);
   }
-
-  donut.innerHTML = b.join('');
-  requestAnimationFrame(renderFrame);
-}
-
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  cursor.style.left = `${mouseX - 5}px`;
-  cursor.style.top = `${mouseY - 5}px`;
-});
-
-document.addEventListener('mouseenter', () => {
-  cursor.style.display = 'block';
-});
-
-document.addEventListener('mouseleave', () => {
-  cursor.style.display = 'none';
-});
-
-renderFrame();
-</script>
-</body></html>
+  
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = `${mouseX - 5}px`;
+    cursor.style.top = `${mouseY - 5}px`;
+  });
+  
+  document.addEventListener('mouseenter', () => {
+    cursor.style.display = 'block';
+  });
+  
+  document.addEventListener('mouseleave', () => {
+    cursor.style.display = 'none';
+  });
+  
+  renderFrame();
+  </script>
+  </body></html>
